@@ -27,9 +27,9 @@ main() {
 
   test('generate type test for tag -> element mapping', () {
     var code = new StringBuffer();
-    code.add('import "dart:html" as html;\n');
+    code.write('import "dart:html" as html;\n');
     htmlElementNames.forEach((tag, className) {
-      code.add('html.$className _$tag;\n');
+      code.write('html.$className _$tag;\n');
     });
 
     // Note: name is important for this to get picked up by run.sh
@@ -40,18 +40,18 @@ main() {
 
   test('generate type test for attribute -> field mapping', () {
     var code = new StringBuffer();
-    code.add('import "dart:html" as html;\n');
-    code.add('main() {\n');
+    code.write('import "dart:html" as html;\n');
+    code.write('main() {\n');
 
     var allTags = htmlElementNames.keys;
     htmlElementFields.forEach((type, attrToField) {
       var id = type.replaceAll('.', '_');
-      code.add('  html.$type _$id = null;\n');
+      code.write('  html.$type _$id = null;\n');
       for (var field in attrToField.values) {
-        code.add('_$id.$field = null;\n');
+        code.write('_$id.$field = null;\n');
       }
     });
-    code.add('}\n');
+    code.write('}\n');
 
     // Note: name is important for this to get picked up by run.sh
     // We don't analyze here, but run.sh will analyze it.

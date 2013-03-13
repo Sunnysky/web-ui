@@ -110,7 +110,7 @@ class LinkedListIterator<E> implements Iterator<E> {
   LinkedListIterator(this._list) {
     // TODO(jmesserly): removed type annotation here to work around
     // http://dartbug.com/9050.
-    _copy = new List<LinkedListNode>.fixedLength(_list.length);
+    _copy = new List<LinkedListNode>(_list.length);
     int i = 0;
     var node = _list.head;
     while (node != null) {

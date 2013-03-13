@@ -110,7 +110,7 @@ DartCodeInfo parseDartCode(String path, String code, Messages messages,
       // Normalize the library URI.
       var uriNode = directive.uri;
       if (uriNode is! SimpleStringLiteral) {
-        String uri = uriNode.accept(new ConstantEvaluator());
+        String uri = uriNode.accept(new ConstantEvaluator(null));
         directive.uri = createStringLiteral(uri);
       }
       directives.add(directive);

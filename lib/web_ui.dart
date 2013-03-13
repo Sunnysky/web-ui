@@ -184,8 +184,7 @@ abstract class WebComponent implements Element {
     for (int i = 0; i < shadowInsertionPoints.length; i++) {
       var point = shadowInsertionPoints[i];
       var tree = shadowInsertionTrees[i];
-      // Remove toList once Node supports insertAllBefore 8882,
-      _distribute(point, tree.nodes.toList());
+      _distribute(point, tree.nodes);
     }
 
     // Replace our child nodes with the ones in the youngest root.
@@ -261,11 +260,9 @@ abstract class WebComponent implements Element {
   }
 
   /** Distribute the [nodes] in place of an existing [insertionPoint]. */
-  static void _distribute(Element insertionPoint, List<Node> nodes) {
+  static void _distribute(Element insertionPoint, Iterable<Node> nodes) {
     assert(_isInsertionPoint(insertionPoint));
-    for (var node in nodes) {
-      insertionPoint.parent.insertBefore(node, insertionPoint);
-    }
+    insertionPoint.parent.insertAllBefore(nodes, insertionPoint);
     insertionPoint.remove();
   }
 
@@ -304,6 +301,9 @@ abstract class WebComponent implements Element {
 
   Node insertBefore(Node newChild, Node refChild) =>
     _element.insertBefore(newChild, refChild);
+
+  Node insertAllBefore(Iterable<Node> newChild, Node refChild) =>
+    _element.insertAllBefore(newChild, refChild);
 
   Map<String, String> get attributes => _element.attributes;
   set attributes(Map<String, String> value) {
@@ -460,25 +460,47 @@ abstract class WebComponent implements Element {
   String get $dom_className => _element.$dom_className;
   set $dom_className(String value) { _element.$dom_className = value; }
 
-  int get clientHeight => _element.clientHeight;
+  int get $dom_clientHeight => _element.$dom_clientHeight;
+  int get $dom_clientLeft => _element.$dom_clientLeft;
+  int get $dom_clientTop => _element.$dom_clientTop;
+  int get $dom_clientWidth => _element.$dom_clientWidth;
 
-  int get clientLeft => _element.clientLeft;
+  @deprecated
+  int get clientHeight => client.height;
 
-  int get clientTop => _element.clientTop;
+  @deprecated
+  int get clientLeft => client.left;
 
-  int get clientWidth => _element.clientWidth;
+  @deprecated
+  int get clientTop => client.top;
+
+  @deprecated
+  int get clientWidth => client.width;
+
+  Rect get client => _element.client;
 
   Element get $dom_firstElementChild => _element.$dom_firstElementChild;
 
   Element get $dom_lastElementChild => _element.$dom_lastElementChild;
 
-  int get offsetHeight => _element.offsetHeight;
+  int get $dom_offsetHeight => _element.$dom_offsetHeight;
+  int get $dom_offsetLeft => _element.$dom_offsetLeft;
+  int get $dom_offsetTop => _element.$dom_offsetTop;
+  int get $dom_offsetWidth => _element.$dom_offsetWidth;
 
-  int get offsetLeft => _element.offsetLeft;
+  @deprecated
+  int get offsetHeight => offset.height;
 
-  int get offsetTop => _element.offsetTop;
+  @deprecated
+  int get offsetLeft => offset.left;
 
-  int get offsetWidth => _element.offsetWidth;
+  @deprecated
+  int get offsetTop => offset.top;
+
+  @deprecated
+  int get offsetWidth => offset.width;
+
+  Rect get offset => _element.offset;
 
   int get scrollHeight => _element.scrollHeight;
 
@@ -509,21 +531,18 @@ abstract class WebComponent implements Element {
   void $dom_removeAttributeNS(String namespaceUri, String localName) =>
       _element.$dom_removeAttributeNS(namespaceUri, localName);
 
-  ClientRect getBoundingClientRect() => _element.getBoundingClientRect();
+  Rect getBoundingClientRect() => _element.getBoundingClientRect();
 
-  List<ClientRect> getClientRects() => _element.getClientRects();
+  List<Rect> getClientRects() => _element.getClientRects();
 
-  List<Node> $dom_getElementsByClassName(String name) =>
-      _element.$dom_getElementsByClassName(name);
+  List<Node> getElementsByClassName(String name) =>
+      _element.getElementsByClassName(name);
 
   List<Node> $dom_getElementsByTagName(String name) =>
       _element.$dom_getElementsByTagName(name);
 
   bool $dom_hasAttribute(String name) =>
       _element.$dom_hasAttribute(name);
-
-  Element $dom_querySelector(String selectors) =>
-      _element.$dom_querySelector(selectors);
 
   List<Node> $dom_querySelectorAll(String selectors) =>
       _element.$dom_querySelectorAll(selectors);
@@ -553,8 +572,6 @@ abstract class WebComponent implements Element {
     _element.$dom_addEventListener(type, listener, useCapture);
   }
 
-  Node $dom_appendChild(Node newChild) => _element.$dom_appendChild(newChild);
-
   bool dispatchEvent(Event event) => _element.dispatchEvent(event);
 
   Node $dom_removeChild(Node oldChild) => _element.$dom_removeChild(oldChild);
@@ -571,7 +588,7 @@ abstract class WebComponent implements Element {
 
   set xtag(value) { _element.xtag = value; }
 
-  void append(Element e) => _element.append(e);
+  Node append(Node e) => _element.append(e);
 
   void appendText(String text) => _element.appendText(text);
 

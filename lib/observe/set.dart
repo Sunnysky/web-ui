@@ -117,28 +117,36 @@ class ObservableSet<E> extends Collection<E> implements Set<E>, Observable {
    */
   void removeAll(Collection<E> collection) => collection.forEach(remove);
 
-  /**
-   * Returns true if [collection] contains all the elements of this
-   * collection.
-   */
-  bool isSubsetOf(Collection<E> collection) =>
-      new Set<E>.from(collection).containsAll(this);
+  /** Returns true if [other] contains all the elements of this set. */
+  bool isSubsetOf(Set<E> other) =>
+      new Set<E>.from(other).containsAll(this);
 
-  /**
-   * Returns true if this collection contains all the elements of
-   * [collection].
-   */
-  bool containsAll(Collection<E> collection) => collection.every(contains);
+  /** Returns true if this set contains all the elements of [other]. */
+  bool containsAll(Set<E> other) => other.every(contains);
 
-  /**
-   * Returns a new set which is the intersection between this set and
-   * the given collection.
-   */
-  ObservableSet<E> intersection(Collection<E> collection) {
+  /** Returns a new set which is the intersection of this set and [other]. */
+  ObservableSet<E> intersection(Set<E> other) {
     var result = new ObservableSet<E>(createMap: _createMap);
 
-    for (E value in collection) {
+    for (E value in other) {
       if (contains(value)) result.add(value);
+    }
+    return result;
+  }
+
+  /** Returns a new set with the elements of both this are [other]. */
+  ObservableSet<E> union(Set<E> other) {
+    return new ObservableSet<E>(createMap: _createMap)
+        ..addAll(this)
+        ..addAll(other);
+  }
+
+  /** Returns a new set with the elements of this that are not in [other]. */
+  ObservableSet<E> difference(Set<E> other) {
+    var result = new ObservableSet<E>(createMap: _createMap);
+
+    for (E value in this) {
+      if (!other.contains(value)) result.add(value);
     }
     return result;
   }
